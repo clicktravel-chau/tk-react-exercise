@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddRecipe renders 1`] = `
+<DocumentFragment>
+  <div
+    class="submit-form"
+    data-testid="add-recipe-root"
+  >
+    <div>
+      <div
+        class="form-group"
+      >
+        <label
+          for="name"
+        >
+          Name
+        </label>
+        <input
+          class="form-control"
+          id="name"
+          name="name"
+          required=""
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="form-group"
+      >
+        <label
+          for="description"
+        >
+          Description
+        </label>
+        <input
+          class="form-control"
+          id="description"
+          name="description"
+          required=""
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        class="form-group"
+      >
+        <label
+          for="ingredients"
+        >
+          Ingredients (separate them with a comma)
+        </label>
+        <input
+          class="form-control"
+          id="ingredients"
+          name="ingredients"
+          required=""
+          type="text"
+          value=""
+        />
+      </div>
+      <button
+        class="btn btn-success"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
