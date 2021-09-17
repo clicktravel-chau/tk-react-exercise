@@ -9,6 +9,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+The server for the back-end of the Recipe app,\
+go to the location of the `tk-django-exercise` project\
+Run `docker-compose build` if not built already, and then `docker-compose up`
+
 ### `npm start`
 
 Runs the app in the development mode.\

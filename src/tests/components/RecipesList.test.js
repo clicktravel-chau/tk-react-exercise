@@ -3,7 +3,7 @@ import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import axiosMock from 'axios';
 import RecipesList from '../../components/RecipesList';
-import {BrowserRouter} from 'react-router-dom';
+import { Router } from 'react-router-dom';
 
 describe('RecipesList', () => {
   afterEach(cleanup);
@@ -69,7 +69,7 @@ describe('RecipesList', () => {
       // When
       // Need to wrap in BrowserRouter otherwise test is hit by an error,
       // You should not use <Link> outside a <Router>
-      const { getByTestId } = render(<BrowserRouter><RecipesList /></BrowserRouter>);
+      const { getByTestId } = render(<Router><RecipesList /></Router>);
 
       // Then
       await waitFor(() => expect(getByTestId('recipes-listgroup')).toBeVisible());

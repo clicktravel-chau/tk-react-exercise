@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import RecipeService from '../services/RecipeService';
+import ErrorMessage from './ErrorMessage';
+
+const initialRecipeState = {
+  id: null,
+  name: '',
+  description: '',
+  ingredients: '',
+};
 
 const AddRecipe = () => {
-  const initialRecipeState = {
-    id: null,
-    name: '',
-    description: '',
-    ingredients: '',
-  };
-
   const [recipe, setRecipe] = useState(initialRecipeState);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = event => {
     const { name, value } = event.target;
     setRecipe({ ...recipe, [name]: value });
   };
 
-  const saveRecipe = () => {
+  const saveRecipe = async () => {
     const ingredients = recipe.ingredients
       .split(',')
       .map(ingredient => ({ name: ingredient.trim() }));
@@ -28,21 +30,20 @@ const AddRecipe = () => {
       ingredients: ingredients,
     };
 
-    RecipeService.create(data)
-      .then(response => {
-        setRecipe({
-          id: response.data.id,
-          name: response.data.name,
-          description: response.data.description,
-          ingredients: response.data.ingredients,
-        });
+    try {
+      const response = await RecipeService.create(data);
 
-        setSubmitted(true);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
+      setRecipe({
+        id: response.data.id,
+        name: response.data.name,
+        description: response.data.description,
+        ingredients: response.data.ingredients,
       });
+
+      setSubmitted(true);
+    } catch (e) {
+      setErrorMessage(e.getMessage);
+    }
   };
 
   const newRecipe = () => {
@@ -52,9 +53,10 @@ const AddRecipe = () => {
 
   return (
     <div data-testid="add-recipe-root" className="submit-form">
+      <ErrorMessage errorMessage={errorMessage} />
       {submitted ? (
         <div>
-          <h4 data-testid="success-header">You submitted successfully!</h4>
+          <h1 data-testid="success-header">You submitted successfully!</h1>
           <button className="btn btn-success" onClick={newRecipe}>
             Add another
           </button>

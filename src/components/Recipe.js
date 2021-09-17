@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import RecipeService from '../services/RecipeService';
+import ErrorMessage from './ErrorMessage';
+
+const initialRecipeState = {
+  id: null,
+  name: "",
+  description: "",
+  ingredients: [],
+};
 
 const Recipe = props => {
-  const initialRecipeState = {
-    id: null,
-    name: "",
-    description: "",
-    ingredients: [],
-  };
   const [currentRecipe, setCurrentRecipe] = useState(initialRecipeState);
   const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const getRecipe = id => {
-    RecipeService.get(id)
-      .then(response => {
-        if (response.data) {
-          const ingredients = response.data.ingredients.reduce(
-            (accumulator, currentIngredient) =>
-              (accumulator ? accumulator + ", " : "") + currentIngredient.name
-            , "");
+  const getRecipe = async id => {
+    try {
+      const response = await RecipeService.get(id);
+      if (response.data) {
+        const ingredients = response.data.ingredients.reduce(
+          (accumulator, currentIngredient) =>
+            (accumulator ? accumulator + ", " : "") + currentIngredient.name
+          , "");
 
-          setCurrentRecipe({...response.data, ingredients});
-        } else {
-          setCurrentRecipe(false);
-        }
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+        setCurrentRecipe({...response.data, ingredients});
+      } else {
+        setCurrentRecipe(false);
+      }
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
   };
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const Recipe = props => {
     setCurrentRecipe({...currentRecipe, [name]: value});
   };
 
-  const updateRecipe = () => {
+  const updateRecipe = async () => {
     const ingredients = currentRecipe.ingredients
       .split(',')
       .map(ingredient => ({ name: ingredient.trim() }));
@@ -49,32 +50,29 @@ const Recipe = props => {
       ingredients,
     };
 
-    RecipeService.update(transformedRecipe.id, transformedRecipe)
-      .then(response => {
-        console.log(response.data);
-        setMessage("Recipe has been updated successfully!");
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    try {
+      await RecipeService.update(transformedRecipe.id, transformedRecipe);
+      setMessage("Recipe has been updated successfully!");
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
   };
 
-  const deleteRecipe = () => {
-    RecipeService.remove(currentRecipe.id)
-      .then(response => {
-        console.log(response.data);
-        props.history.push("/recipe/recipes/");
-      })
-      .catch(e => {
-        console.log(e);
-      });
+  const deleteRecipe = async () => {
+    try {
+      await RecipeService.remove(currentRecipe.id);
+      props.history.push("/recipe/recipes/");
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
   };
 
   return (
     <div>
+      <ErrorMessage errorMessage={errorMessage} />
       {currentRecipe ? (
         <div data-testid="recipe-edit-form" className="edit-form">
-          <h4>Recipe</h4>
+          <h1>Recipe</h1>
           <form>
             <div className="form-group">
               <label htmlFor="name">Name</label>

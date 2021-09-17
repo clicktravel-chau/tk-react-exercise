@@ -16,12 +16,12 @@ function App() {
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link to={"/recipes"} className="nav-link">
+            <Link to="/recipes" className="nav-link">
               Recipes
             </Link>
           </li>
           <li className="nav-item">
-            <Link to={"/recipes/add"} className="nav-link">
+            <Link to="/recipes/add" className="nav-link">
               Add
             </Link>
           </li>

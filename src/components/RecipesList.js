@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import RecipeService from '../services/RecipeService';
 import { Link } from 'react-router-dom';
+import ErrorMessage from './ErrorMessage';
 
 const RecipesList = () => {
   const [recipes, setRecipes] = useState([]);
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [searchName, setSearchName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     retrieveRecipes();
@@ -17,15 +19,13 @@ const RecipesList = () => {
     setSearchName(searchName);
   };
 
-  const retrieveRecipes = () => {
-    RecipeService.getAll()
-      .then(response => {
-        setRecipes(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+  const retrieveRecipes = async () => {
+    try {
+      const response = await RecipeService.getAll();
+      setRecipes(response.data);
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
   };
 
   const setActiveRecipe = (recipe, index) => {
@@ -33,19 +33,18 @@ const RecipesList = () => {
     setCurrentIndex(index);
   };
 
-  const findByName = () => {
-    RecipeService.findByName(searchName)
-      .then(response => {
-        setRecipes(response.data);
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+  const findByName = async () => {
+    try {
+      const response = await RecipeService.findByName(searchName);
+      setRecipes(response.data);
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
   };
 
   return (
     <div className="list row">
+      <ErrorMessage errorMessage={errorMessage} />
       <div className="col-md-8">
         <div className="input-group mb-3">
           <input
@@ -68,7 +67,7 @@ const RecipesList = () => {
         </div>
       </div>
       <div className="col-md-6">
-        <h4 data-testid="recipes-header">Recipes List</h4>
+        <h1 data-testid="recipes-header">Recipes List</h1>
 
         <ul data-testid="recipes-listgroup" className="list-group">
           {
@@ -79,7 +78,7 @@ const RecipesList = () => {
                   "list-group-item " + (index === currentIndex ? "active" : "")
                 }
                 onClick={() => setActiveRecipe(recipe, index)}
-                key={index}
+                key={recipe.id}
               >
                 {recipe.name}
               </li>
